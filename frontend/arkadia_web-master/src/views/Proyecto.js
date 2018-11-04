@@ -6,8 +6,8 @@ const getProyecto = props => {
     return props.location.state.proyecto;
   } else {
     return {
-      nombre: "eParking",
-      descripcion: "Proyecto eParking"
+      nombre: "ecoWheels",
+      descripcion: "Proyecto ecoWheels"
     };
   }
 };

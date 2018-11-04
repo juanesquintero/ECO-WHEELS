@@ -21,7 +21,7 @@ class VerEstaciones extends Component {
   }
 
   getEstaciones() {
-    axios.get(`${API_URL}/estaciones`).then(res => {
+    axios.get(`${API_URL}/estaciones/`).then(res => {
       const { data } = res;
       console.log(data);
       this.setState({
@@ -41,8 +41,8 @@ class VerEstaciones extends Component {
             lista={this.state.estaciones}
             columns={[
               "nombre",
-              "dispo_ciclas",
-              "dispo_park",
+              "ciclas",
+              "parkings",
               "direccion",
               "descripcion"
             ]}
