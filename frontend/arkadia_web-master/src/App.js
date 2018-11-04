@@ -6,8 +6,8 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import SideBar from "./components/SideBar";
 import Proyecto from "./views/Proyecto";
 import Paquete from "./views/Paquete";
-import GestionarZona from "./views/eParking/GestionarZona";
-import VerZonas from "./views/eParking/VerZonas";
+import GestionarEstacion from "./views/ecoWheels/GestionarEstacion";
+import VerEstaciones from "./views/ecoWheels/VerEstaciones";
 
 const styles = theme => ({
   root: {
@@ -36,8 +36,14 @@ class App extends React.Component {
               <div className={classes.appBarSpacer} />
               <Route path="/proyecto" component={Proyecto} exact />
               <Route path="/paquete" component={Paquete} />
-              <Route path="/eParking/gestionarZona" component={GestionarZona} />
-              <Route path="/eParking/verZonas" component={VerZonas} />
+              <Route
+                path="/ecowheels/gestionarEstacion"
+                component={GestionarEstacion}
+              />
+              <Route
+                path="/ecowheels/verEstaciones"
+                component={VerEstaciones}
+              />
             </main>
           </div>
         </Fragment>
