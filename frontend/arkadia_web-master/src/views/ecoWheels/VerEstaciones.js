@@ -1,103 +1,49 @@
 import React, { Component } from "react";
-
 import axios from "axios";
-
 import SimpleTable from "../../components/SimpleTable";
-
 import Typography from "@material-ui/core/Typography";
 
+const API_URL = 'http://localhost:3000';
 
-
-import PACKAGE from "../../../package.json";
-
-
-
-const API_URL = PACKAGE.config.api[process.env.NODE_ENV];
-
-class VerZonas extends Component {
-
+class VerEstaciones extends Component {
   constructor(props) {
-
     super(props);
 
-
-
     this.state = {
-
-      zonas: []
-
+      estaciones: []
     };
-
-
-
-    this.getZonas = this.getZonas.bind(this);
-
+    this.getEstaciones = this.getEstaciones.bind(this);
   }
-
-
 
   componentDidMount() {
-
-    this.getZonas();
-
+    this.getEstaciones();
   }
 
-
-
-  getZonas() {
-
-    axios.get(`${API_URL}/zonaParqueo/`).then(res => {
-
+  getEstaciones() {
+    axios.get(`${API_URL}/estaciones`).then(res => {
       const { data } = res;
-
-
-
+      console.log(data);
       this.setState({
-
-        zonas: data
-
+        estaciones: data
       });
-
     });
-
   }
-
-
 
   render() {
-
     return (
-
       <div>
-
         <Typography variant="h4" gutterBottom component="h2">
-
-          Zonas
-
+          Estaciones
         </Typography>
-
-
-
         <div>
-
           <SimpleTable
-
-            lista={this.state.zonas}
-
-            columns={["nombre", "ubicacion"]}
-
+            lista={this.state.estaciones}
+            columns={["nombre","dispo_ciclas", "dispo_park","direccion","descripcion"]}
           />
-
         </div>
-
       </div>
-
     );
-
   }
-
 }
 
-
-
-export default VerZonas;
+export default VerEstaciones;
