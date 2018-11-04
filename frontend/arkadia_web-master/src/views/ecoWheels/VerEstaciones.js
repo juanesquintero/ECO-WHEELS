@@ -3,7 +3,7 @@ import axios from "axios";
 import SimpleTable from "../../components/SimpleTable";
 import Typography from "@material-ui/core/Typography";
 
-const API_URL = 'http://localhost:3000';
+const API_URL = "http://localhost:3001";
 
 class VerEstaciones extends Component {
   constructor(props) {
@@ -38,7 +38,13 @@ class VerEstaciones extends Component {
         <div>
           <SimpleTable
             lista={this.state.estaciones}
-            columns={["nombre","dispo_ciclas", "dispo_park","direccion","descripcion"]}
+            columns={[
+              "nombre",
+              "dispo_ciclas",
+              "dispo_park",
+              "direccion",
+              "descripcion"
+            ]}
           />
         </div>
       </div>

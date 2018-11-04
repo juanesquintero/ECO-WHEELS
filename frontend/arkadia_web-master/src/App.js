@@ -6,8 +6,12 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import SideBar from "./components/SideBar";
 import Proyecto from "./views/Proyecto";
 import Paquete from "./views/Paquete";
-import GestionarEstacion from "./views/ecoWheels/GestionarEstacion";
+
+import RealizarReserva from "./views/ecoWheels/RealizarReserva";
 import VerEstaciones from "./views/ecoWheels/VerEstaciones";
+
+import GestionarZona from "./views/eParking/GestionarZona";
+import VerZonas from "./views/eParking/VerZonas";
 
 const styles = theme => ({
   root: {
@@ -37,13 +41,15 @@ class App extends React.Component {
               <Route path="/proyecto" component={Proyecto} exact />
               <Route path="/paquete" component={Paquete} />
               <Route
-                path="/ecowheels/gestionarEstacion"
-                component={GestionarEstacion}
+                path="/ecowheels/RealizarReserva"
+                component={RealizarReserva}
               />
               <Route
                 path="/ecowheels/verEstaciones"
                 component={VerEstaciones}
               />
+              <Route path="/eparking/gestionarZona" component={GestionarZona} />
+              <Route path="/eparking/verZonas" component={VerZonas} />
             </main>
           </div>
         </Fragment>

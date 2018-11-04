@@ -10,9 +10,8 @@ import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Snackbar from "@material-ui/core/Snackbar";
-import PACKAGE from "../../../package.json";
 
-const API_URL = 'http://localhost:3000';
+const API_URL = "http://localhost:3001";
 
 const styles = theme => ({
   layout: {
@@ -47,20 +46,23 @@ const styles = theme => ({
   }
 });
 
-class GestionarEstacion extends Component {
+class RealizarReserva extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-        nombre:"",
-        dispo_ciclas: 0,
-        dispo_park: 0,
-        direccion: "",
-        descripcion: "",
-        open: false
+      fecha_reserva: "",
+      fecha_pago: "",
+      fecha_prestamo: "",
+      medio_pago: "",
+      monto: 0,
+      Estacion: "",
+      Cicla: "",
+      Usuario: "",
+      open: false
     };
 
-    this.crearEstacion = this.crearEstacion.bind(this);
+    this.crearReserva = this.crearReserva.bind(this);
     this.handleClose = this.handleClose.bind(this);
   }
 
@@ -68,24 +70,28 @@ class GestionarEstacion extends Component {
     this.setState({ open: false });
   }
 
-  crearEstacion(e) {
+  crearReserva(e) {
     e.preventDefault();
-
     axios
-      .post(`${API_URL}/estaciones/`, {
-        nombre: this.state.nombre,
-        dispo_ciclas: this.state.dispo_ciclas,
-        dispo_park: this.state.dispo_park,
-        direccion: this.state.direccion,
-        descripcion: this.state.descripcion,
+      .post(`${API_URL}/reservas/`, {
+        fecha_reserva: this.state.fecha_reserva,
+        fecha_pago: this.state.fecha_pago,
+        fecha_prestamo: this.state.fecha_prestamo,
+        medio_pago: this.state.medio_pago,
+        monto: this.state.monto,
+        Estacion: this.state.Estacion,
+        Cicla: this.state.Cicla
       })
       .then(res => {
         this.setState({
-          nombre: "",
-          dispo_ciclas: 0,
-          dispo_park: 0,
-          direccion: "",
-          descripcion: "",          
+          fecha_reserva: "",
+          fecha_pago: "",
+          fecha_prestamo: "",
+          medio_pago: "",
+          monto: 0,
+          Estacion: "",
+          Cicla: "",
+          Usuario: "",
           open: true
         });
       });
@@ -100,37 +106,32 @@ class GestionarEstacion extends Component {
           anchorOrigin={{ vertical: "top", horizontal: "right" }}
           open={this.state.open}
           onClose={this.handleClose}
-          message={<span id="message-id">Zona creada con exito</span>}
+          message={<span id="message-id">Reserva realizada con exito</span>}
         />
         <CssBaseline />
         <main className={classes.layout}>
           <Paper className={classes.paper}>
             <Typography component="h1" variant="h5">
-              Zona
+              Reserva
             </Typography>
             <form className={classes.form}>
               <FormControl margin="normal" required fullWidth>
-                <InputLabel htmlFor="name">Nombre</InputLabel>
+                <InputLabel htmlFor="estacion">Estacion</InputLabel>
                 <Input
-                  id="name"
-                  name="nombre"
+                  id="estacion"
+                  name="estacion"
                   autoFocus
-                  value={this.state.nombre}
-                  onChange={e => this.setState({ nombre: e.target.value })}
+                  value={this.state.Estacion}
+                  onChange={e => this.setState({ Estacion: e.target.value })}
                 />
               </FormControl>
-              nombre: "",
-          dispo_ciclas: 0,
-          dispo_park: 0,
-          direccion: "",
-          descripcion: "", 
               <FormControl margin="normal" required fullWidth>
-                <InputLabel htmlFor="dispo_ciclas">Ciclas</InputLabel>
+                <InputLabel htmlFor="medio_pago">Medio de Pago</InputLabel>
                 <Input
-                  id="dispo_ciclas"
-                  name="dispo_ciclas"
-                  value={this.state.dispo_ciclas}
-                  onChange={e => this.setState({ dispo_ciclas: e.target.value })}
+                  id="medio_pago"
+                  name="medio_pago"
+                  value={this.state.medio_pago}
+                  onChange={e => this.setState({ medio_pago: e.target.value })}
                 />
               </FormControl>
               <Button
@@ -139,7 +140,7 @@ class GestionarEstacion extends Component {
                 variant="contained"
                 color="primary"
                 className={classes.submit}
-                onClick={this.crearEstacion}
+                onClick={this.crearReserva}
               >
                 Crear Estacion
               </Button>
@@ -151,8 +152,8 @@ class GestionarEstacion extends Component {
   }
 }
 
-GestionarEstacion.propTypes = {
+RealizarReserva.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(GestionarEstacion);
+export default withStyles(styles)(RealizarReserva);
