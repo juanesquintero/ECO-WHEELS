@@ -12,7 +12,8 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import Snackbar from "@material-ui/core/Snackbar";
 import PACKAGE from "../../../package.json";
 
-const API_URL = PACKAGE.config.api[process.env.NODE_ENV];
+//const API_URL = PACKAGE.config.api[process.env.NODE_ENV];
+const API_URL = "https://arkadia-api.herokuapp.com/api";
 
 const styles = theme => ({
   layout: {

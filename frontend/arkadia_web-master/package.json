@@ -4,7 +4,7 @@
   "private": true,
   "config": {
     "api": {
-      "development": "http://localhost:3001",
+      "development": "https://arkadia-api.herokuapp.com/api",
       "production": "https://arkadia-api.herokuapp.com/api"
     }
   },

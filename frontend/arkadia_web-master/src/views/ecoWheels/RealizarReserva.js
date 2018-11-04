@@ -49,16 +49,15 @@ const styles = theme => ({
 class RealizarReserva extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
       fecha_reserva: "",
       fecha_pago: "",
       fecha_prestamo: "",
       medio_pago: "",
       monto: 0,
-      Estacion: "",
-      Cicla: "",
-      Usuario: "",
+      estacion: "",
+      cicla: "",
+      usuario: "",
       open: false
     };
 
@@ -72,15 +71,17 @@ class RealizarReserva extends Component {
 
   crearReserva(e) {
     e.preventDefault();
+
     axios
-      .post(`${API_URL}/reservas/`, {
+      .post(`${API_URL}/reservas`, {
         fecha_reserva: this.state.fecha_reserva,
         fecha_pago: this.state.fecha_pago,
         fecha_prestamo: this.state.fecha_prestamo,
         medio_pago: this.state.medio_pago,
         monto: this.state.monto,
-        Estacion: this.state.Estacion,
-        Cicla: this.state.Cicla
+        estacion: this.state.estacion,
+        cicla: this.state.cicla,
+        usuario: this.state.usuario
       })
       .then(res => {
         this.setState({
@@ -89,9 +90,9 @@ class RealizarReserva extends Component {
           fecha_prestamo: "",
           medio_pago: "",
           monto: 0,
-          Estacion: "",
-          Cicla: "",
-          Usuario: "",
+          estacion: "",
+          cicla: "",
+          usuario: "",
           open: true
         });
       });
@@ -116,13 +117,13 @@ class RealizarReserva extends Component {
             </Typography>
             <form className={classes.form}>
               <FormControl margin="normal" required fullWidth>
-                <InputLabel htmlFor="estacion">Estacion</InputLabel>
+                <InputLabel htmlFor="station">Estacion</InputLabel>
                 <Input
-                  id="estacion"
+                  id="station"
                   name="estacion"
                   autoFocus
-                  value={this.state.Estacion}
-                  onChange={e => this.setState({ Estacion: e.target.value })}
+                  value={this.state.estacion}
+                  onChange={e => this.setState({ estacion: e.target.value })}
                 />
               </FormControl>
               <FormControl margin="normal" required fullWidth>
@@ -142,7 +143,7 @@ class RealizarReserva extends Component {
                 className={classes.submit}
                 onClick={this.crearReserva}
               >
-                Crear Estacion
+                Crear Reserva
               </Button>
             </form>
           </Paper>
