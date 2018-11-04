@@ -31,6 +31,10 @@ class CrudOperations {
       this.client = await mongo.MongoClient.connect(this.url);
       //Obtengo la db
       this.db = this.client.db(this.dbName);
+      //Convierto el _id de mongo en ObjectId
+      if (payload._id != undefined) {
+        payload._id = mongo.ObjectID(payload._id)
+      }
       //Consulto datos en la coleccion
       let result = await this.db.collection(collection).find(payload).toArray();
       //Cierro la conexión
