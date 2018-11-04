@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import SideBar from "./components/SideBar";
+
 import Proyecto from "./views/Proyecto";
 import Paquete from "./views/Paquete";
 
