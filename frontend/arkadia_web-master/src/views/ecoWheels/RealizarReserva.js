@@ -9,6 +9,8 @@ import InputLabel from "@material-ui/core/InputLabel";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import withStyles from "@material-ui/core/styles/withStyles";
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
 import Snackbar from "@material-ui/core/Snackbar";
 
 const API_URL = "http://localhost:3001";
@@ -71,10 +73,11 @@ class RealizarReserva extends Component {
 
   crearReserva(e) {
     e.preventDefault();
+    var date = new Date().toLocaleString();
 
     axios
       .post(`${API_URL}/reservas`, {
-        fecha_reserva: this.state.fecha_reserva,
+        fecha_reserva: date,
         fecha_pago: this.state.fecha_pago,
         fecha_prestamo: this.state.fecha_prestamo,
         medio_pago: this.state.medio_pago,
@@ -128,13 +131,41 @@ class RealizarReserva extends Component {
               </FormControl>
               <FormControl margin="normal" required fullWidth>
                 <InputLabel htmlFor="medio_pago">Medio de Pago</InputLabel>
-                <Input
+                <Select
                   id="medio_pago"
                   name="medio_pago"
-                  value={this.state.medio_pago}
-                  onChange={e => this.setState({ medio_pago: e.target.value })}
+                  Value={this.state.medio_pago}
+                  onChange={e =>
+                    this.setState({
+                      monto: e.target.value,
+                      medio_pago: e.target.selectedIndex
+                    })
+                  }
+                >
+                  <MenuItem value="">
+                    <em>None</em>
+                  </MenuItem>
+                  <MenuItem name="Tarjeta" value={1700}>
+                    Tarjeta
+                  </MenuItem>
+                  <MenuItem name="Efectivo" value={1500}>
+                    Efectivo
+                  </MenuItem>
+                  <MenuItem name="Civica" value={1000}>
+                    Civica
+                  </MenuItem>
+                </Select>
+              </FormControl>
+              <FormControl margin="normal" required fullWidth>
+                <InputLabel htmlFor="monto">Monto a Pagar</InputLabel>
+                <Input
+                  id="monto"
+                  name="monto"
+                  value={this.state.monto}
+                  onChange={e => this.setState({ monto: e.target.value })}
                 />
               </FormControl>
+
               <Button
                 type="submit"
                 fullWidth

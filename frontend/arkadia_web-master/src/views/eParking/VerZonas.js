@@ -4,8 +4,7 @@ import SimpleTable from "../../components/SimpleTable";
 import Typography from "@material-ui/core/Typography";
 import PACKAGE from "../../../package.json";
 
-//const API_URL = PACKAGE.config.api[process.env.NODE_ENV];
-const API_URL = "https://arkadia-api.herokuapp.com/api";
+const API_URL = PACKAGE.config.api[process.env.NODE_ENV];
 
 class VerZonas extends Component {
   constructor(props) {

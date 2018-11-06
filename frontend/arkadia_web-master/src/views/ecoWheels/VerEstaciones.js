@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import axios from "axios";
 import SimpleTable from "../../components/SimpleTable";
 import Typography from "@material-ui/core/Typography";
-import PACKAGE from "../../../package.json";
 
 const API_URL = "http://localhost:3001";
 
