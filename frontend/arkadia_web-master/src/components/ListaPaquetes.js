@@ -18,11 +18,11 @@ const getUrl = nombre => {
     case "Ver zonas de parqueo":
       url = "/eParking/verZonas";
       break;
-    case "Realizar reserva de una cicla":
-      url = "/ecoWheels/gestionarZona";
+    case "Reservar bicicleta":
+      url = "/ecoWheels/reservarBicicleta";
       break;
-    case "Ver estaciones":
-      url = "/ecoWheels/verEstaciones";
+    case "Visualizar estaciones":
+      url = "/ecoWheels/visualizarEstaciones";
       break;
   }
   return url;

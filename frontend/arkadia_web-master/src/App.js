@@ -8,8 +8,8 @@ import SideBar from "./components/SideBar";
 import Proyecto from "./views/Proyecto";
 import Paquete from "./views/Paquete";
 
-import RealizarReserva from "./views/ecoWheels/RealizarReserva";
-import VerEstaciones from "./views/ecoWheels/VerEstaciones";
+import ReservarBicicleta from "./views/ecoWheels/ReservarBicicleta";
+import VisualizarEstaciones from "./views/ecoWheels/VisualizarEstaciones";
 
 import GestionarZona from "./views/eParking/GestionarZona";
 import VerZonas from "./views/eParking/VerZonas";
@@ -44,12 +44,12 @@ class App extends React.Component {
               <Route path="/eparking/gestionarZona" component={GestionarZona} />
               <Route path="/eparking/verZonas" component={VerZonas} />
               <Route
-                path="/ecowheels/realizarReserva"
-                component={RealizarReserva}
+                path="/ecowheels/reservarbicicleta"
+                component={ReservarBicicleta}
               />
               <Route
-                path="/ecowheels/verEstaciones"
-                component={VerEstaciones}
+                path="/ecowheels/visualizarestaciones"
+                component={VisualizarEstaciones}
               />
             </main>
           </div>

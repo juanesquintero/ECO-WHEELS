@@ -9,11 +9,18 @@ import InputLabel from "@material-ui/core/InputLabel";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import withStyles from "@material-ui/core/styles/withStyles";
-import Select from "@material-ui/core/Select";
-import MenuItem from "@material-ui/core/MenuItem";
 import Snackbar from "@material-ui/core/Snackbar";
 
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
+
 const API_URL = "http://localhost:3001";
+
+const options = [
+  { value: "chocolate", label: "Chocolate" },
+  { value: "strawberry", label: "Strawberry" },
+  { value: "vanilla", label: "Vanilla" }
+];
 
 const styles = theme => ({
   layout: {
@@ -138,28 +145,23 @@ class RealizarReserva extends Component {
                   onChange={e =>
                     this.setState({
                       monto: e.target.value,
-                      medio_pago: e.target.selectedIndex
+                      medio_pago: e.target.value
                     })
                   }
                 >
                   <MenuItem value="">
                     <em>None</em>
                   </MenuItem>
-                  <MenuItem name="Tarjeta" value={1700}>
-                    Tarjeta
-                  </MenuItem>
-                  <MenuItem name="Efectivo" value={1500}>
-                    Efectivo
-                  </MenuItem>
-                  <MenuItem name="Civica" value={1000}>
-                    Civica
-                  </MenuItem>
+                  <MenuItem value={1700}>Tarjeta</MenuItem>
+                  <MenuItem value={1500}>Efectivo</MenuItem>
+                  <MenuItem value={1000}>Civica</MenuItem>
                 </Select>
               </FormControl>
               <FormControl margin="normal" required fullWidth>
                 <InputLabel htmlFor="monto">Monto a Pagar</InputLabel>
                 <Input
                   id="monto"
+                  disabled
                   name="monto"
                   value={this.state.monto}
                   onChange={e => this.setState({ monto: e.target.value })}
