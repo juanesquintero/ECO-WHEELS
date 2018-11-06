@@ -142,12 +142,7 @@ class RealizarReserva extends Component {
                   id="medio_pago"
                   name="medio_pago"
                   Value={this.state.medio_pago}
-                  onChange={e =>
-                    this.setState({
-                      monto: e.target.value,
-                      medio_pago: e.target.value
-                    })
-                  }
+                  onChange={e => this.setState({ medio_pago: e.target.value })}
                 >
                   <MenuItem value="">
                     <em>None</em>
