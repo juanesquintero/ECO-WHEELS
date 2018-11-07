@@ -2,54 +2,91 @@ import React, { Component } from "react";
 import axios from "axios";
 import SimpleTable from "../../components/SimpleTable";
 import Typography from "@material-ui/core/Typography";
+import GoogleMapReact from "google-map-react";
+import PACKAGE from "../../../package.json";
 
-const API_URL = "http://localhost:3001";
+import "./eco.css";
 
-class VerEstaciones extends Component {
+const PuntoBicicleta = ({ text }) => (
+  <div
+    style={{
+      color: "white",
+      background: "grey",
+      padding: "15px 10px",
+      display: "inline-flex",
+      textAlign: "center",
+      alignItems: "center",
+      justifyContent: "center",
+      borderRadius: "100%",
+      transform: "translate(-50%, -50%)"
+    }}
+  >
+    {text}
+  </div>
+);
+
+class VisualizarEstaciones extends Component {
+  static defaultProps = {
+    center: {
+      lat: 6.2544001,
+      lng: -75.577968
+    },
+    zoom: 13
+  };
+
   constructor(props) {
     super(props);
 
     this.state = {
       estaciones: []
     };
+
     this.getEstaciones = this.getEstaciones.bind(this);
   }
 
-  componentDidMount() {
-    this.getEstaciones();
-  }
-
   getEstaciones() {
-    axios.get(`${API_URL}/estaciones/`).then(res => {
+    axios.get("http://localhost:3001/estaciones/").then(res => {
       const { data } = res;
-      console.log(data);
+
       this.setState({
         estaciones: data
       });
     });
   }
 
+  componentDidMount() {
+    this.getEstaciones();
+  }
+
   render() {
+    console.log(this.state.estaciones);
     return (
       <div>
         <Typography variant="h4" gutterBottom component="h2">
-          Estaciones
+          Visualizar Estaciones
         </Typography>
-        <div>
-          <SimpleTable
-            lista={this.state.estaciones}
-            columns={[
-              "nombre",
-              "ciclas",
-              "parkings",
-              "direccion",
-              "descripcion"
-            ]}
-          />
+
+        <div className="ecoWheels-map">
+          <GoogleMapReact
+            bootstrapURLKeys={{
+              key: "AIzaSyAHbC2zuS8DRYn6zOCre5z5r0iZhW16kV8"
+            }}
+            defaultCenter={this.props.center}
+            defaultZoom={this.props.zoom}
+          >
+            {this.state.estaciones.map(estacion => (
+              <PuntoBicicleta
+                key={estacion.nombre}
+                lat={estacion.lat}
+                lng={estacion.lng}
+                text={estacion.nombre}
+              />
+            ))}
+          </GoogleMapReact>
         </div>
       </div>
     );
   }
 }
 
-export default VerEstaciones;
+export default VisualizarEstaciones;

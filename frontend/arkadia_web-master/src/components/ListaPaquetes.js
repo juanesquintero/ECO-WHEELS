@@ -24,6 +24,9 @@ const getUrl = nombre => {
     case "Visualizar estaciones":
       url = "/ecoWheels/visualizarEstaciones";
       break;
+    case "Realizar inscripción":
+      url = "/ecoWheels/visualizarEstaciones2";
+      break;
   }
   return url;
 };

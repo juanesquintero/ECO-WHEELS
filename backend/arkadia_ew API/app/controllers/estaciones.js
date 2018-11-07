@@ -68,9 +68,8 @@ routes.put("/:id", function(req, res) {
     .Mongo()
     .update("estaciones", filtro, body)
     .then(function(respuesta) {
-      console.log("PUT: ", filtro, body);
-      //console.log('Respuesta cuando se agrega: ', respuesta)
       res.send(respuesta);
+      console.log("PUT: ", filtro, body);
     })
     .catch(function(error) {
       console.log("Error al agregar: ", error);

@@ -9,6 +9,7 @@ import Proyecto from "./views/Proyecto";
 import Paquete from "./views/Paquete";
 
 import ReservarBicicleta from "./views/ecoWheels/ReservarBicicleta";
+import VisualizarEstaciones2 from "./views/ecoWheels/VisualizarEstaciones2";
 import VisualizarEstaciones from "./views/ecoWheels/VisualizarEstaciones";
 
 import GestionarZona from "./views/eParking/GestionarZona";
@@ -46,6 +47,10 @@ class App extends React.Component {
               <Route
                 path="/ecowheels/reservarbicicleta"
                 component={ReservarBicicleta}
+              />
+              <Route
+                path="/ecowheels/visualizarestaciones2"
+                component={VisualizarEstaciones2}
               />
               <Route
                 path="/ecowheels/visualizarestaciones"
