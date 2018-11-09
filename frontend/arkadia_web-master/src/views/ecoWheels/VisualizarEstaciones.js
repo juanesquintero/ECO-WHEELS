@@ -3,7 +3,7 @@ import axios from "axios";
 import SimpleTable from "../../components/SimpleTable";
 import Typography from "@material-ui/core/Typography";
 import GoogleMapReact from "google-map-react";
-import { InfoWindow } from "react-google-maps";
+import { InfoWindow, Marker } from "react-google-maps";
 import PACKAGE from "../../../package.json";
 
 import "./eco.css";
@@ -49,7 +49,6 @@ class VisualizarEstaciones extends Component {
   getEstaciones() {
     axios.get("http://localhost:3001/estaciones/").then(res => {
       const { data } = res;
-
       this.setState({
         estaciones: data
       });
@@ -59,20 +58,9 @@ class VisualizarEstaciones extends Component {
   componentDidMount() {
     this.getEstaciones();
   }
-  handleToggleOpen = () => {
-    this.setState({
-      isOpen: true
-    });
-  };
-
-  handleToggleClose = () => {
-    this.setState({
-      isOpen: false
-    });
-  };
 
   render() {
-    console.log(this.state.estaciones);
+    //console.log(this.state.estaciones);
     return (
       <div>
         <Typography variant="h4" gutterBottom component="h2">
@@ -88,19 +76,13 @@ class VisualizarEstaciones extends Component {
             defaultZoom={this.props.zoom}
           >
             {this.state.estaciones.map(estacion => (
-              <PuntoBicicleta
+              <Marker
                 key={estacion.nombre}
                 lat={estacion.lat}
                 lng={estacion.lng}
                 text={estacion.nombre}
-                onClick={() => this.handleToggleOpen()}
-              >
-                {this.state.isOpen && (
-                  <InfoWindow onCloseClick={this.props.handleCloseCall}>
-                    <h1>jjsdjds</h1>
-                  </InfoWindow>
-                )}
-              </PuntoBicicleta>
+                onClick={console.log("Clicked")}
+              />
             ))}
           </GoogleMapReact>
         </div>
