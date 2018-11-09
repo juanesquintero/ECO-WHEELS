@@ -3,6 +3,7 @@ import axios from "axios";
 import SimpleTable from "../../components/SimpleTable";
 import Typography from "@material-ui/core/Typography";
 import GoogleMapReact from "google-map-react";
+import { InfoWindow } from "react-google-maps";
 import PACKAGE from "../../../package.json";
 
 import "./eco.css";
@@ -28,17 +29,18 @@ const PuntoBicicleta = ({ text }) => (
 class VisualizarEstaciones extends Component {
   static defaultProps = {
     center: {
-      lat: 6.2544001,
-      lng: -75.577968
+      lat: 6.2394001,
+      lng: -75.55718
     },
-    zoom: 13
+    zoom: 13.2
   };
 
   constructor(props) {
     super(props);
 
     this.state = {
-      estaciones: []
+      estaciones: [],
+      isOpen: false
     };
 
     this.getEstaciones = this.getEstaciones.bind(this);
@@ -57,6 +59,17 @@ class VisualizarEstaciones extends Component {
   componentDidMount() {
     this.getEstaciones();
   }
+  handleToggleOpen = () => {
+    this.setState({
+      isOpen: true
+    });
+  };
+
+  handleToggleClose = () => {
+    this.setState({
+      isOpen: false
+    });
+  };
 
   render() {
     console.log(this.state.estaciones);
@@ -80,7 +93,14 @@ class VisualizarEstaciones extends Component {
                 lat={estacion.lat}
                 lng={estacion.lng}
                 text={estacion.nombre}
-              />
+                onClick={() => this.handleToggleOpen()}
+              >
+                {this.state.isOpen && (
+                  <InfoWindow onCloseClick={this.props.handleCloseCall}>
+                    <h1>jjsdjds</h1>
+                  </InfoWindow>
+                )}
+              </PuntoBicicleta>
             ))}
           </GoogleMapReact>
         </div>
