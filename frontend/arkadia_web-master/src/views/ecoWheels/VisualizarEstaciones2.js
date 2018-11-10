@@ -22,7 +22,7 @@ class VerEstaciones extends Component {
   getEstaciones() {
     axios.get(`${API_URL}/estaciones/`).then(res => {
       const { data } = res;
-      console.log(data);
+      //console.log(data);
       this.setState({
         estaciones: data
       });

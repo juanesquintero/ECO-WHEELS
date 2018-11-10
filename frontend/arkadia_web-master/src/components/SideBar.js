@@ -211,7 +211,7 @@ class SideBar extends React.Component {
                 }}
               >
                 <IconButton
-                  aria-label={proyecto.nombre}
+                  // aria-label={proyecto.nombre}
                   color="inherit"
                   className={classNames(
                     this.isCurrentProject(proyecto.nombre) &&
