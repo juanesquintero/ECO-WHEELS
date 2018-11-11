@@ -1,10 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
-import SimpleTable from "../../components/SimpleTable";
 import Typography from "@material-ui/core/Typography";
 import GoogleMapReact from "google-map-react";
-import { InfoWindow, Marker } from "react-google-maps";
-import PACKAGE from "../../../package.json";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -12,7 +9,8 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import "./eco.css";
-import { MuiThemeProvider } from "@material-ui/core";
+
+const API_URL = "http://localhost:3001";
 
 class VisualizarEstaciones extends Component {
   static defaultProps = {
@@ -44,7 +42,7 @@ class VisualizarEstaciones extends Component {
   }
 
   getEstaciones() {
-    axios.get("http://localhost:3001/estaciones").then(res => {
+    axios.get(`${API_URL}/estaciones`).then(res => {
       const { data } = res;
       this.setState({
         estaciones: data

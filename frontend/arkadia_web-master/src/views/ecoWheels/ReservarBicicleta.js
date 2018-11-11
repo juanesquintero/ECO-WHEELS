@@ -9,18 +9,17 @@ import InputLabel from "@material-ui/core/InputLabel";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import withStyles from "@material-ui/core/styles/withStyles";
-import Snackbar from "@material-ui/core/Snackbar";
-
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
+import { Container, Row, Col } from "reactstrap";
+import { Grid } from "@material-ui/core";
 
 const API_URL = "http://localhost:3001";
-
-const options = [
-  { value: "chocolate", label: "Chocolate" },
-  { value: "strawberry", label: "Strawberry" },
-  { value: "vanilla", label: "Vanilla" }
-];
 
 const styles = theme => ({
   layout: {
@@ -67,40 +66,62 @@ class RealizarReserva extends Component {
       estacion: "",
       cicla: "",
       usuario: "",
-      open: false
+
+      date: "",
+      open: false,
+      estaciones: []
     };
 
     this.crearReserva = this.crearReserva.bind(this);
     this.handleClose = this.handleClose.bind(this);
+    this.getEstaciones = this.getEstaciones.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.setDate = this.setDate.bind(this);
   }
 
-  handleClose() {
-    this.setState({ open: false });
+  componentDidMount() {
+    this.getEstaciones();
+  }
+
+  getEstaciones() {
+    axios.get(`${API_URL}/estaciones`).then(res => {
+      const { data } = res;
+      this.setState({
+        estaciones: data
+      });
+    });
+  }
+
+  setDate() {
+    if (this.state.estacion && this.state.medio_pago) {
+      var date = new Date();
+      this.setState({ fecha_reserva: date.toLocaleString() });
+      var pay_date = new Date(date.getTime() + 15 * 60000);
+      this.setState({ fecha_pago: pay_date.toLocaleString() });
+    }
   }
 
   crearReserva(e) {
     e.preventDefault();
-    var date = new Date().toLocaleString();
-
     axios
       .post(`${API_URL}/reservas`, {
-        fecha_reserva: date,
-        fecha_pago: this.state.fecha_pago,
+        fecha_reserva: this.state.fecha_reserva,
+        fecha_pago: "",
         fecha_prestamo: this.state.fecha_prestamo,
         medio_pago: this.state.medio_pago,
         monto: this.state.monto,
         estacion: this.state.estacion,
-        cicla: this.state.cicla,
-        usuario: this.state.usuario
+        cicla: 1,
+        usuario: 2
       })
       .then(res => {
         this.setState({
           fecha_reserva: "",
-          fecha_pago: "",
+          fecha_pago: this.state.fecha_pago,
           fecha_prestamo: "",
           medio_pago: "",
           monto: 0,
-          estacion: "",
+          estacion: this.state.estacion,
           cicla: "",
           usuario: "",
           open: true
@@ -108,48 +129,88 @@ class RealizarReserva extends Component {
       });
   }
 
+  handleClose() {
+    this.setState({ open: false });
+  }
+
+  handleChange() {
+    switch (this.state.medio_pago) {
+      case "Tarjeta":
+        this.setState({ monto: 1700 });
+        break;
+      case "Civica":
+        this.setState({ monto: 1000 });
+        break;
+      case "Efectivo":
+        this.setState({ monto: 1500 });
+        break;
+      case "":
+        this.setState({ monto: 0 });
+        break;
+    }
+  }
+
   render() {
     const { classes } = this.props;
-
     return (
       <Fragment>
-        <Snackbar
-          anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        <Dialog
           open={this.state.open}
           onClose={this.handleClose}
-          message={<span id="message-id">Reserva realizada con exito</span>}
-        />
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">Reserva Realizada</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Tiene 15 min ({this.state.fecha_pago.slice(10)}) para llegar
+              <br /> a la estacion <b>{this.state.estacion}</b> y realizar el
+              pago.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.handleClose} color="primary">
+              OK
+            </Button>
+          </DialogActions>
+        </Dialog>
         <CssBaseline />
         <main className={classes.layout}>
           <Paper className={classes.paper}>
             <Typography component="h1" variant="h5">
-              Reserva
+              Eco Reserva
             </Typography>
-            <form className={classes.form}>
+            <form className={classes.form} onMouseOver={this.handleChange}>
               <FormControl margin="normal" required fullWidth>
                 <InputLabel htmlFor="station">Estacion</InputLabel>
-                <Input
+                <Select
                   id="station"
                   name="estacion"
-                  autoFocus
                   value={this.state.estacion}
                   onChange={e => this.setState({ estacion: e.target.value })}
-                />
+                >
+                  {this.state.estaciones.map(estacion => (
+                    <MenuItem value={estacion.nombre}>
+                      {estacion.nombre}
+                    </MenuItem>
+                  ))}
+                </Select>
               </FormControl>
+
               <FormControl margin="normal" required fullWidth>
                 <InputLabel htmlFor="medio_pago">Medio de Pago</InputLabel>
                 <Select
                   id="medio_pago"
                   name="medio_pago"
-                  Value={this.state.medio_pago}
+                  value={this.state.medio_pago}
                   onChange={e => this.setState({ medio_pago: e.target.value })}
                 >
                   <MenuItem value="">
                     <em>None</em>
                   </MenuItem>
-                  <MenuItem value={1700}>Tarjeta</MenuItem>
-                  <MenuItem value={1500}>Efectivo</MenuItem>
-                  <MenuItem value={1000}>Civica</MenuItem>
+                  <MenuItem value={"Tarjeta"}>Tarjeta</MenuItem>
+                  <MenuItem value={"Efectivo"}>Efectivo</MenuItem>
+                  <MenuItem value={"Civica"}>Civica</MenuItem>
                 </Select>
               </FormControl>
               <FormControl margin="normal" required fullWidth>
@@ -159,11 +220,48 @@ class RealizarReserva extends Component {
                   disabled
                   name="monto"
                   value={this.state.monto}
-                  onChange={e => this.setState({ monto: e.target.value })}
                 />
               </FormControl>
+              <center>
+                <FormControl margin="normal" required>
+                  <center>
+                    <InputLabel htmlFor="hoy">Hoy</InputLabel>
+                    <Input
+                      id="hoy"
+                      name="hoy"
+                      disabled
+                      value={this.state.fecha_reserva.substring(0, 10)}
+                    />{" "}
+                  </center>
+                </FormControl>
 
+                <FormControl margin="normal" required>
+                  <InputLabel htmlFor="fecha_reserva">
+                    Hora de reserva
+                  </InputLabel>
+                  <Input
+                    id="fecha_reserva"
+                    name="fecha_reserva"
+                    disabled
+                    value={this.state.fecha_reserva.slice(10)}
+                  />
+                </FormControl>
+
+                <FormControl margin="normal" required>
+                  <InputLabel htmlFor="fecha_pago">
+                    Hora limite de pago
+                  </InputLabel>
+                  <Input
+                    id="fecha_pago"
+                    name="fecha_pago"
+                    disabled
+                    value={this.state.fecha_pago.slice(10)}
+                    style={{ fontWeight: "600" }}
+                  />
+                </FormControl>
+              </center>
               <Button
+                onMouseOver={this.setDate}
                 type="submit"
                 fullWidth
                 variant="contained"
@@ -171,7 +269,7 @@ class RealizarReserva extends Component {
                 className={classes.submit}
                 onClick={this.crearReserva}
               >
-                Crear Reserva
+                Reservar
               </Button>
             </form>
           </Paper>
