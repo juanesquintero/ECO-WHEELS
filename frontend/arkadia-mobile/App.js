@@ -34,7 +34,7 @@ export default class App extends Component {
 
     return (
       <View style={{ flex: 1, paddingTop: 20 }}>
-        <FlatList
+        {/* <FlatList
           data={this.state.dataSource}
           renderItem={({ item }) => (
             <Text>
@@ -43,6 +43,40 @@ export default class App extends Component {
           )}
           keyExtractor={({ _id }) => _id}
         />
+      </View> */}
+      <View>
+          <Text style={styles.title}>Realizar Reserva</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Estacion"
+            value={this.state.estacion}
+            onChange={estacion => this.changeEstacion(estacion)}
+          />
+          <Picker
+            style={styles.input}
+            selectedValue={this.state.medio_pago}
+            onValueChange={(itemValue, itemIndex) =>
+              this.setState({ medio_pago: itemValue })
+            }
+          >
+            <Picker.Item label="None" value="None" />
+            <Picker.Item label="Efectivo" value="Efectivo" />
+            <Picker.Item label="Civica" value="Civica" />
+            <Picker.Item label="Tarjeta" value="Tarjeta" />
+          </Picker>
+          <TextInput
+            style={styles.input}
+            placeholder="Monto"
+            value={this.state.monto}
+            onChange={monto => this.changeMonto(monto)}
+          />
+          <TouchableHighlight
+            style={styles.button}
+            onPress={() => this.isPressed()}
+          >
+            <Text style={styles.text_Button}>Enviar</Text>
+          </TouchableHighlight>
+        </View>
       </View>
     );
   }
