@@ -160,10 +160,12 @@ class RealizarReserva extends Component {
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
         >
-          <DialogTitle id="alert-dialog-title">Reserva Realizada</DialogTitle>
+          <center>
+            <DialogTitle id="alert-dialog-title">Reserva Realizada</DialogTitle>
+          </center>
           <DialogContent>
             <DialogContentText id="alert-dialog-description">
-              Tiene 15 min ({this.state.fecha_pago.slice(10)}) para llegar
+              Tienes 15 min ({this.state.fecha_pago.slice(10)}) para llegar
               <br /> a la estacion <b>{this.state.estacion}</b> y realizar el
               pago.
             </DialogContentText>
@@ -219,23 +221,21 @@ class RealizarReserva extends Component {
                   id="monto"
                   disabled
                   name="monto"
-                  value={this.state.monto}
+                  value={"$" + this.state.monto}
                 />
               </FormControl>
               <center>
-                <FormControl margin="normal" required>
-                  <center>
-                    <InputLabel htmlFor="hoy">Hoy</InputLabel>
-                    <Input
-                      id="hoy"
-                      name="hoy"
-                      disabled
-                      value={this.state.fecha_reserva.substring(0, 10)}
-                    />{" "}
-                  </center>
+                <FormControl margin="normal">
+                  <InputLabel htmlFor="hoy">Hoy</InputLabel>
+                  <Input
+                    id="hoy"
+                    name="hoy"
+                    disabled
+                    value={this.state.fecha_reserva.substring(0, 10)}
+                  />
                 </FormControl>
 
-                <FormControl margin="normal" required>
+                <FormControl margin="normal">
                   <InputLabel htmlFor="fecha_reserva">
                     Hora de reserva
                   </InputLabel>
@@ -247,8 +247,11 @@ class RealizarReserva extends Component {
                   />
                 </FormControl>
 
-                <FormControl margin="normal" required>
-                  <InputLabel htmlFor="fecha_pago">
+                <FormControl margin="normal">
+                  <InputLabel
+                    style={{ fontWeight: "600" }}
+                    htmlFor="fecha_pago"
+                  >
                     Hora limite de pago
                   </InputLabel>
                   <Input
@@ -262,6 +265,7 @@ class RealizarReserva extends Component {
               </center>
               <Button
                 onMouseOver={this.setDate}
+                onClick={this.setDate}
                 type="submit"
                 fullWidth
                 variant="contained"
