@@ -16,8 +16,6 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
-import { Container, Row, Col } from "reactstrap";
-import { Grid } from "@material-ui/core";
 
 const API_URL = "http://localhost:3001";
 
@@ -107,7 +105,7 @@ class RealizarReserva extends Component {
       .post(`${API_URL}/reservas`, {
         fecha_reserva: this.state.fecha_reserva,
         fecha_pago: "",
-        fecha_prestamo: this.state.fecha_prestamo,
+        fecha_prestamo: "",
         medio_pago: this.state.medio_pago,
         monto: this.state.monto,
         estacion: this.state.estacion,
@@ -152,6 +150,7 @@ class RealizarReserva extends Component {
 
   render() {
     const { classes } = this.props;
+
     return (
       <Fragment>
         <Dialog
@@ -176,7 +175,9 @@ class RealizarReserva extends Component {
             </Button>
           </DialogActions>
         </Dialog>
+
         <CssBaseline />
+
         <main className={classes.layout}>
           <Paper className={classes.paper}>
             <Typography component="h1" variant="h5">
@@ -265,7 +266,6 @@ class RealizarReserva extends Component {
               </center>
               <Button
                 onMouseOver={this.setDate}
-                onClick={this.setDate}
                 type="submit"
                 fullWidth
                 variant="contained"
