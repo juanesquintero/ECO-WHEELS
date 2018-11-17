@@ -1,57 +1,167 @@
-import React, { Component } from "react";
-import { FlatList, ActivityIndicator, Text, View } from "react-native";
+import React from "react";
 import axios from "axios";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  Alert,
+  TextInput,
+  TouchableHighlight,
+  Picker
+} from "react-native";
+import { FlatList } from "react-native-gesture-handler";
+import { hidden } from "ansi-colors";
 
-export default class App extends Component {
+const API_URL = "http://localhost:3001";
+
+export default class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { isLoading: true };
+
+    this.state = {
+      fecha_reserva: "",
+      fecha_pago: "",
+      fecha_prestamo: "",
+      cicla: "",
+      usuario: "",
+      date: "",
+
+      loading: false,
+      estaciones: [],
+      estacion: "",
+      medio_pago: "",
+      monto: 0,
+      open: false,
+      url: "http://192.168.0.14:3001/estaciones"
+    };
+    this.getEstaciones = this.getEstaciones.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.handleClose = this.handleClose.bind(this);
+    this.crearReserva = this.crearReserva.bind(this);
   }
 
   componentDidMount() {
-    axios
-      .get("http://localhost:3001/api/projects")
-      .then(res => {
-        const { data } = res;
+    this.getEstaciones();
+  }
+
+  getEstaciones = () => {
+    this.setState({ loading: true });
+    fetch(this.state.url)
+      .then(res => res.json())
+      .then(resJson => {
+        console.log(resJson);
         this.setState({
-          isLoading: false,
-          dataSource: data
+          estaciones: resJson
         });
       })
-      .catch(error => {
-        console.error(error);
+      .catch(err => {
+        console.error(err);
       });
+  };
+
+  handleChange() {
+    switch (this.state.medio_pago) {
+      case "Tarjeta":
+        this.setState({ monto: 1700 });
+        break;
+      case "Civica":
+        this.setState({ monto: 1000 });
+        break;
+      case "Efectivo":
+        this.setState({ monto: 1500 });
+        break;
+      case "":
+        this.setState({ monto: 0 });
+        break;
+    }
+  }
+
+  handleClose() {
+    this.setState({ open: false });
+  }
+
+  getSelectedPickerItem = () => {
+    Alert.alert(this.state.medio_pago);
+  };
+
+  changeMonto(monto) {
+    this.setState({ monto });
+  }
+
+  crearReserva(e) {
+    e.preventDefault();
+    axios
+      .post(`${API_URL}/reservas`, {
+        fecha_reserva: this.state.fecha_reserva,
+        fecha_pago: "",
+        fecha_prestamo: "",
+        medio_pago: this.state.medio_pago,
+        monto: this.state.monto,
+        estacion: this.state.estacion,
+        cicla: 1,
+        usuario: 2
+      })
+      .then(res => {
+        this.setState({
+          fecha_reserva: "",
+          fecha_pago: this.state.fecha_pago,
+          fecha_prestamo: "",
+          medio_pago: "",
+          monto: 0,
+          estacion: this.state.estacion,
+          cicla: "",
+          usuario: "",
+          open: true
+        });
+      });
+    Alert.alert("Boton press");
+  }
+
+  handleClose() {
+    this.setState({ open: false });
+  }
+
+  isPressed() {
+    if (this.state.estacion) {
+      Alert.alert("Reserva realizada");
+    } else {
+      Alert.alert("Error");
+    }
   }
 
   render() {
-    if (this.state.isLoading) {
-      return (
-        <View style={{ flex: 1, padding: 20 }}>
-          <ActivityIndicator />
-        </View>
-      );
+    if (this.state.loading) {
+      <View style={styles.container}>
+        <Text>Obteniendo estaciones</Text>
+      </View>;
     }
 
     return (
-      <View style={{ flex: 1, paddingTop: 20 }}>
+      // view principal
+      <View style={{ flex: 1, paddingTop: 50, paddingLeft: 5 }}>
+        {/* Flatlist */}
         {/* <FlatList
-          data={this.state.dataSource}
-          renderItem={({ item }) => (
-            <Text>
-              {item.name}: {item.description}
-            </Text>
-          )}
-          keyExtractor={({ _id }) => _id}
-        />
-      </View> */}
-      <View>
+          style={{ height: 20, alignSelf: "center" }}
+          data={this.state.estaciones}
+          renderItem={
+            ({ item }) => <Text>{item.nombre}, {item.direccion}</Text>
+          }
+          keyExtractor={(item) => item._id}
+        /> */}
+        <View isPressed={this.handleChange}>
           <Text style={styles.title}>Realizar Reserva</Text>
-          <TextInput
+          <Picker
             style={styles.input}
-            placeholder="Estacion"
-            value={this.state.estacion}
-            onChange={estacion => this.changeEstacion(estacion)}
-          />
+            selectedValue={this.state.estacion}
+            onValueChange={(itemValue, itemIndex) =>
+              this.setState({ estacion: itemValue })
+            }
+          >
+            {this.state.estaciones.map(estacion => (
+              <Picker.Item label={estacion.nombre} value={estacion.nombre} />
+            ))}
+          </Picker>
           <Picker
             style={styles.input}
             selectedValue={this.state.medio_pago}
@@ -65,18 +175,32 @@ export default class App extends Component {
             <Picker.Item label="Tarjeta" value="Tarjeta" />
           </Picker>
           <TextInput
+            editable={false}
             style={styles.input}
             placeholder="Monto"
+            keyboardType="numeric"
             value={this.state.monto}
             onChange={monto => this.changeMonto(monto)}
           />
-          <TouchableHighlight
-            style={styles.button}
-            onPress={() => this.isPressed()}
-          >
+          {/* <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                color="primary"
+                title='Reservar'
+                onClick={this.crearReserva}
+              >
+              </Button> */}
+          <TouchableHighlight style={styles.button} onPress={this.crearReserva}>
             <Text style={styles.text_Button}>Enviar</Text>
           </TouchableHighlight>
         </View>
+        {/* Button */}
+        {/* <Button
+          title="Learn More"
+          color="#841584"
+          accessibilityLabel="Learn more about this purple button"
+        /> */}
       </View>
     );
   }
@@ -107,12 +231,12 @@ const styles = StyleSheet.create({
     marginBottom: 20
   },
   button: {
-    backgroundColor: "gray",
+    backgroundColor: "blue",
     paddingTop: 20,
     paddingBottom: 20,
     borderWidth: 1,
     borderRadius: 10,
-    justifyContent: 'center'
+    justifyContent: "center"
   },
   text_Button: {
     textAlign: "center",
