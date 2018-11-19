@@ -7,5 +7,6 @@ routes.use("/ciclas", require("./app/controllers/ciclas"));
 routes.use("/estaciones", require("./app/controllers/estaciones"));
 routes.use("/zonas", require("./app/controllers/zonas"));
 routes.use("/reservas", require("./app/controllers/reservas"));
+routes.use("/medios", require("./app/controllers/medios"));
 
 module.exports = routes;

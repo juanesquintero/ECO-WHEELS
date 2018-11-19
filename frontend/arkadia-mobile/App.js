@@ -5,15 +5,12 @@ import {
   Text,
   View,
   Button,
+  Label,
   Alert,
   TextInput,
   TouchableHighlight,
   Picker
 } from "react-native";
-import { FlatList } from "react-native-gesture-handler";
-import { hidden } from "ansi-colors";
-
-const API_URL = "http://localhost:3001";
 
 export default class App extends React.Component {
   constructor(props) {
@@ -29,25 +26,56 @@ export default class App extends React.Component {
 
       loading: false,
       estaciones: [],
+      medios: [],
       estacion: "",
-      medio_pago: "",
+      medio_pago: {
+        nombre: "None",
+        valor: 0
+      },
       monto: 0,
       open: false,
-      url: "http://192.168.0.14:3001/estaciones"
+      url: "http://192.168.1.16:3001"
     };
     this.getEstaciones = this.getEstaciones.bind(this);
+    this.getMedios = this.getMedios.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleClose = this.handleClose.bind(this);
     this.crearReserva = this.crearReserva.bind(this);
+    this.setDate = this.setDate.bind(this);
+  }
+
+  setDate() {
+    if (this.state.estacion && this.state.medio_pago) {
+      var date = new Date();
+      this.setState({ fecha_reserva: date.toLocaleString() });
+      var pay_date = new Date(date.getTime() + 15 * 60000);
+      this.setState({ fecha_pago: pay_date.toLocaleString() });
+    }
   }
 
   componentDidMount() {
     this.getEstaciones();
+    this.getMedios();
+  }
+
+  getMedios() {
+    this.setState({ loading: true });
+    fetch(`${this.state.url}/medios`)
+      .then(res => res.json())
+      .then(resJson => {
+        console.log(resJson);
+        this.setState({
+          medios: resJson
+        });
+      })
+      .catch(err => {
+        console.error(err);
+      });
   }
 
   getEstaciones = () => {
     this.setState({ loading: true });
-    fetch(this.state.url)
+    fetch(`${this.state.url}/estaciones`)
       .then(res => res.json())
       .then(resJson => {
         console.log(resJson);
@@ -61,20 +89,7 @@ export default class App extends React.Component {
   };
 
   handleChange() {
-    switch (this.state.medio_pago) {
-      case "Tarjeta":
-        this.setState({ monto: 1700 });
-        break;
-      case "Civica":
-        this.setState({ monto: 1000 });
-        break;
-      case "Efectivo":
-        this.setState({ monto: 1500 });
-        break;
-      case "":
-        this.setState({ monto: 0 });
-        break;
-    }
+    this.setState({ monto: this.state.medio_pago["valor"] });
   }
 
   handleClose() {
@@ -82,7 +97,7 @@ export default class App extends React.Component {
   }
 
   getSelectedPickerItem = () => {
-    Alert.alert(this.state.medio_pago);
+    Alert.alert(this.state.medio_pago["nombre"]);
   };
 
   changeMonto(monto) {
@@ -92,11 +107,11 @@ export default class App extends React.Component {
   crearReserva(e) {
     e.preventDefault();
     axios
-      .post(`${API_URL}/reservas`, {
+      .post(`${this.state.url}/reservas`, {
         fecha_reserva: this.state.fecha_reserva,
         fecha_pago: "",
         fecha_prestamo: "",
-        medio_pago: this.state.medio_pago,
+        medio_pago: this.state.medio_pago["nombre"],
         monto: this.state.monto,
         estacion: this.state.estacion,
         cicla: 1,
@@ -107,7 +122,10 @@ export default class App extends React.Component {
           fecha_reserva: "",
           fecha_pago: this.state.fecha_pago,
           fecha_prestamo: "",
-          medio_pago: "",
+          medio_pago: {
+            nombre: "None",
+            valor: 0
+          },
           monto: 0,
           estacion: this.state.estacion,
           cicla: "",
@@ -115,19 +133,15 @@ export default class App extends React.Component {
           open: true
         });
       });
-    Alert.alert("Boton press");
+    Alert.alert("¡Reserva exitosa!");
   }
 
   handleClose() {
     this.setState({ open: false });
   }
 
-  isPressed() {
-    if (this.state.estacion) {
-      Alert.alert("Reserva realizada");
-    } else {
-      Alert.alert("Error");
-    }
+  onBlur() {
+    console.log("#####: onBlur");
   }
 
   render() {
@@ -136,21 +150,15 @@ export default class App extends React.Component {
         <Text>Obteniendo estaciones</Text>
       </View>;
     }
-
     return (
       // view principal
-      <View style={{ flex: 1, paddingTop: 50, paddingLeft: 5 }}>
-        {/* Flatlist */}
-        {/* <FlatList
-          style={{ height: 20, alignSelf: "center" }}
-          data={this.state.estaciones}
-          renderItem={
-            ({ item }) => <Text>{item.nombre}, {item.direccion}</Text>
-          }
-          keyExtractor={(item) => item._id}
-        /> */}
-        <View isPressed={this.handleChange}>
-          <Text style={styles.title}>Realizar Reserva</Text>
+      <View style={styles.MainContainer}>
+        <View style={styles.BarContainer}>
+          <Text style={styles.text_Title}>Eco Wheels</Text>
+        </View>
+        <View style={styles.container} isPressed={this.handleChange}>
+          <Text style={styles.title}>Reserva</Text>
+          <Text style={styles.labelInput}>Estacion*</Text>
           <Picker
             style={styles.input}
             selectedValue={this.state.estacion}
@@ -162,6 +170,7 @@ export default class App extends React.Component {
               <Picker.Item label={estacion.nombre} value={estacion.nombre} />
             ))}
           </Picker>
+          <Text style={styles.labelInput}>Medio de Pago*</Text>
           <Picker
             style={styles.input}
             selectedValue={this.state.medio_pago}
@@ -169,38 +178,22 @@ export default class App extends React.Component {
               this.setState({ medio_pago: itemValue })
             }
           >
-            <Picker.Item label="None" value="None" />
-            <Picker.Item label="Efectivo" value="Efectivo" />
-            <Picker.Item label="Civica" value="Civica" />
-            <Picker.Item label="Tarjeta" value="Tarjeta" />
+            {this.state.medios.map(medio => (
+              <Picker.Item label={medio.nombre} value={medio} />
+            ))}
           </Picker>
+          <Text style={styles.labelInput}>Monto*</Text>
           <TextInput
-            editable={false}
+            // editable={false}
             style={styles.input}
-            placeholder="Monto"
             keyboardType="numeric"
             value={this.state.monto}
             onChange={monto => this.changeMonto(monto)}
           />
-          {/* <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-                title='Reservar'
-                onClick={this.crearReserva}
-              >
-              </Button> */}
           <TouchableHighlight style={styles.button} onPress={this.crearReserva}>
             <Text style={styles.text_Button}>Enviar</Text>
           </TouchableHighlight>
         </View>
-        {/* Button */}
-        {/* <Button
-          title="Learn More"
-          color="#841584"
-          accessibilityLabel="Learn more about this purple button"
-        /> */}
       </View>
     );
   }
@@ -211,18 +204,34 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     marginTop: 30,
-    paddingLeft: 20,
-    paddingRight: 20
+    marginBottom: 40,
+    paddingTop: 30,
+    paddingLeft: 40,
+    paddingRight: 40
   },
   MainContainer: {
+    backgroundColor: "#F5F5F5",
     flex: 1,
     justifyContent: "center",
-    margin: 20
+    padding: 20,
+    paddingLeft: 40,
+    paddingRight: 40
+  },
+  BarContainer: {
+    backgroundColor: "#3157BB",
+    padding: 20,
+    marginTop: 4
+  },
+  text_Title: {
+    textAlign: "center",
+    fontSize: 30,
+    fontWeight: "bold",
+    color: "#ffffff"
   },
   title: {
     textAlign: "center",
     fontSize: 25,
-    marginBottom: 5
+    marginBottom: 35
   },
   input: {
     height: 40,
@@ -231,15 +240,29 @@ const styles = StyleSheet.create({
     marginBottom: 20
   },
   button: {
-    backgroundColor: "blue",
-    paddingTop: 20,
-    paddingBottom: 20,
-    borderWidth: 1,
-    borderRadius: 10,
+    backgroundColor: "#3157BB",
+    padding: 10,
+    borderRadius: 7,
     justifyContent: "center"
   },
   text_Button: {
     textAlign: "center",
-    fontSize: 20
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#ffffff"
+  },
+  labelInput: {
+    fontSize: 15,
+    color: "#DCDCDC"
+  },
+  formInput: {
+    borderBottomWidth: 1.5,
+    marginLeft: 20,
+    borderColor: "#333"
+  },
+  input: {
+    borderWidth: 0,
+    marginBottom: 10,
+    marginLeft: 2
   }
 });

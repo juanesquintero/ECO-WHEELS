@@ -59,7 +59,10 @@ class RealizarReserva extends Component {
       fecha_reserva: "",
       fecha_pago: "",
       fecha_prestamo: "",
-      medio_pago: "",
+      medio_pago: {
+        nombre: "None",
+        valor: 0
+      },
       monto: 0,
       estacion: "",
       cicla: "",
@@ -67,18 +70,21 @@ class RealizarReserva extends Component {
 
       date: "",
       open: false,
-      estaciones: []
+      estaciones: [],
+      medios: []
     };
 
     this.crearReserva = this.crearReserva.bind(this);
     this.handleClose = this.handleClose.bind(this);
     this.getEstaciones = this.getEstaciones.bind(this);
+    this.getMedios = this.getMedios.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.setDate = this.setDate.bind(this);
   }
 
   componentDidMount() {
     this.getEstaciones();
+    this.getMedios();
   }
 
   getEstaciones() {
@@ -86,6 +92,15 @@ class RealizarReserva extends Component {
       const { data } = res;
       this.setState({
         estaciones: data
+      });
+    });
+  }
+
+  getMedios() {
+    axios.get(`${API_URL}/medios`).then(res => {
+      const { data } = res;
+      this.setState({
+        medios: data
       });
     });
   }
@@ -106,7 +121,7 @@ class RealizarReserva extends Component {
         fecha_reserva: this.state.fecha_reserva,
         fecha_pago: "",
         fecha_prestamo: "",
-        medio_pago: this.state.medio_pago,
+        medio_pago: this.state.medio_pago["nombre"],
         monto: this.state.monto,
         estacion: this.state.estacion,
         cicla: 1,
@@ -117,7 +132,10 @@ class RealizarReserva extends Component {
           fecha_reserva: "",
           fecha_pago: this.state.fecha_pago,
           fecha_prestamo: "",
-          medio_pago: "",
+          medio_pago: {
+            nombre: "None",
+            valor: 0
+          },
           monto: 0,
           estacion: this.state.estacion,
           cicla: "",
@@ -132,20 +150,7 @@ class RealizarReserva extends Component {
   }
 
   handleChange() {
-    switch (this.state.medio_pago) {
-      case "Tarjeta":
-        this.setState({ monto: 1700 });
-        break;
-      case "Civica":
-        this.setState({ monto: 1000 });
-        break;
-      case "Efectivo":
-        this.setState({ monto: 1500 });
-        break;
-      case "":
-        this.setState({ monto: 0 });
-        break;
-    }
+    this.setState({ monto: this.state.medio_pago["valor"] });
   }
 
   render() {
@@ -208,12 +213,9 @@ class RealizarReserva extends Component {
                   value={this.state.medio_pago}
                   onChange={e => this.setState({ medio_pago: e.target.value })}
                 >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value={"Tarjeta"}>Tarjeta</MenuItem>
-                  <MenuItem value={"Efectivo"}>Efectivo</MenuItem>
-                  <MenuItem value={"Civica"}>Civica</MenuItem>
+                  {this.state.medios.map(medio => (
+                    <MenuItem value={medio}>{medio.nombre}</MenuItem>
+                  ))}
                 </Select>
               </FormControl>
               <FormControl margin="normal" required fullWidth>
