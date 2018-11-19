@@ -63,7 +63,6 @@ export default class App extends React.Component {
     fetch(`${API_URL}/medios`)
       .then(res => res.json())
       .then(resJson => {
-        console.log(resJson);
         this.setState({
           medios: resJson
         });
@@ -78,7 +77,6 @@ export default class App extends React.Component {
     fetch(`${API_URL}/estaciones`)
       .then(res => res.json())
       .then(resJson => {
-        console.log(resJson);
         this.setState({
           estaciones: resJson
         });

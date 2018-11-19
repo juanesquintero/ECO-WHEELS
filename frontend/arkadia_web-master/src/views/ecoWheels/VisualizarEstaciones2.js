@@ -8,7 +8,6 @@ const API_URL = "http://localhost:3001";
 class VerEstaciones extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
       estaciones: []
     };
