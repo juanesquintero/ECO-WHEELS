@@ -75,7 +75,7 @@ class RealizarReserva extends Component {
     };
 
     this.crearReserva = this.crearReserva.bind(this);
-    this.handleClose = this.handleClose.bind(this);
+    this.clearAll = this.clearAll.bind(this);
     this.getEstaciones = this.getEstaciones.bind(this);
     this.getMedios = this.getMedios.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -115,38 +115,35 @@ class RealizarReserva extends Component {
   }
 
   crearReserva(e) {
+    this.setDate({ open: true });
     e.preventDefault();
-    axios
-      .post(`${API_URL}/reservas`, {
-        fecha_reserva: this.state.fecha_reserva,
-        fecha_pago: "",
-        fecha_prestamo: "",
-        medio_pago: this.state.medio_pago["nombre"],
-        monto: this.state.monto,
-        estacion: this.state.estacion,
-        cicla: 1,
-        usuario: 2
-      })
-      .then(res => {
-        this.setState({
-          fecha_reserva: "",
-          fecha_pago: this.state.fecha_pago,
-          fecha_prestamo: "",
-          medio_pago: {
-            nombre: "None",
-            valor: 0
-          },
-          monto: 0,
-          estacion: this.state.estacion,
-          cicla: "",
-          usuario: "",
-          open: true
-        });
-      });
+    axios.post(`${API_URL}/reservas`, {
+      fecha_reserva: this.state.fecha_reserva,
+      fecha_pago: "",
+      fecha_prestamo: "",
+      medio_pago: this.state.medio_pago["nombre"],
+      monto: this.state.monto,
+      estacion: this.state.estacion,
+      cicla: 1,
+      usuario: 2
+    });
   }
 
-  handleClose() {
-    this.setState({ open: false });
+  clearAll() {
+    this.setState({
+      fecha_reserva: "",
+      fecha_pago: "",
+      fecha_prestamo: "",
+      medio_pago: {
+        nombre: "None",
+        valor: 0
+      },
+      monto: 0,
+      estacion: "",
+      cicla: "",
+      usuario: "",
+      open: false
+    });
   }
 
   handleChange() {
@@ -160,12 +157,11 @@ class RealizarReserva extends Component {
       <Fragment>
         <Dialog
           open={this.state.open}
-          onClose={this.handleClose}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
         >
           <center>
-            <DialogTitle id="alert-dialog-title">Reserva Realizada</DialogTitle>
+            <DialogTitle id="alert-dialog-title">Reserva Exitosa!</DialogTitle>
           </center>
           <DialogContent>
             <DialogContentText id="alert-dialog-description">
@@ -175,7 +171,7 @@ class RealizarReserva extends Component {
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={this.handleClose} color="primary">
+            <Button onClick={this.clearAll} color="primary">
               OK
             </Button>
           </DialogActions>
@@ -186,7 +182,7 @@ class RealizarReserva extends Component {
         <main className={classes.layout}>
           <Paper className={classes.paper}>
             <Typography component="h1" variant="h5">
-              Eco Reserva
+              Reserva
             </Typography>
             <form className={classes.form} onMouseOver={this.handleChange}>
               <FormControl margin="normal" required fullWidth>
@@ -234,7 +230,7 @@ class RealizarReserva extends Component {
                     id="hoy"
                     name="hoy"
                     disabled
-                    value={this.state.fecha_reserva.substring(0, 10)}
+                    value={this.state.fecha_reserva.slice(10)}
                   />
                 </FormControl>
 

@@ -4,44 +4,44 @@ import {
   StyleSheet,
   Text,
   View,
-  Button,
-  Label,
   Alert,
   TextInput,
   TouchableHighlight,
   Picker
 } from "react-native";
+import Dialog from "react-native-dialog";
+
+const API_URL = "http://192.168.1.16:3001";
 
 export default class App extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      fecha_prestamo: "",
       fecha_reserva: "",
       fecha_pago: "",
-      fecha_prestamo: "",
       cicla: "",
       usuario: "",
       date: "",
 
-      loading: false,
       estaciones: [],
-      medios: [],
       estacion: "",
+      medios: [],
       medio_pago: {
-        nombre: "None",
+        nombre: "",
         valor: 0
       },
-      monto: 0,
+
+      loading: false,
       open: false,
-      url: "http://192.168.1.16:3001"
+      abierto: false
     };
     this.getEstaciones = this.getEstaciones.bind(this);
     this.getMedios = this.getMedios.bind(this);
-    this.handleChange = this.handleChange.bind(this);
-    this.handleClose = this.handleClose.bind(this);
     this.crearReserva = this.crearReserva.bind(this);
     this.setDate = this.setDate.bind(this);
+    this.clearAll = this.clearAll.bind(this);
   }
 
   setDate() {
@@ -60,7 +60,7 @@ export default class App extends React.Component {
 
   getMedios() {
     this.setState({ loading: true });
-    fetch(`${this.state.url}/medios`)
+    fetch(`${API_URL}/medios`)
       .then(res => res.json())
       .then(resJson => {
         console.log(resJson);
@@ -75,7 +75,7 @@ export default class App extends React.Component {
 
   getEstaciones = () => {
     this.setState({ loading: true });
-    fetch(`${this.state.url}/estaciones`)
+    fetch(`${API_URL}/estaciones`)
       .then(res => res.json())
       .then(resJson => {
         console.log(resJson);
@@ -88,60 +88,40 @@ export default class App extends React.Component {
       });
   };
 
-  handleChange() {
-    this.setState({ monto: this.state.medio_pago["valor"] });
-  }
-
-  handleClose() {
-    this.setState({ open: false });
-  }
-
-  getSelectedPickerItem = () => {
-    Alert.alert(this.state.medio_pago["nombre"]);
-  };
-
-  changeMonto(monto) {
-    this.setState({ monto });
-  }
-
   crearReserva(e) {
-    e.preventDefault();
-    axios
-      .post(`${this.state.url}/reservas`, {
+    if (this.state.estacion && this.state.medio_pago) {
+      this.setDate();
+      this.setState({ open: true });
+      e.preventDefault();
+      axios.post(`${API_URL}/reservas`, {
         fecha_reserva: this.state.fecha_reserva,
         fecha_pago: "",
         fecha_prestamo: "",
         medio_pago: this.state.medio_pago["nombre"],
-        monto: this.state.monto,
+        monto: this.state.medio_pago["valor"],
         estacion: this.state.estacion,
         cicla: 1,
         usuario: 2
-      })
-      .then(res => {
-        this.setState({
-          fecha_reserva: "",
-          fecha_pago: this.state.fecha_pago,
-          fecha_prestamo: "",
-          medio_pago: {
-            nombre: "None",
-            valor: 0
-          },
-          monto: 0,
-          estacion: this.state.estacion,
-          cicla: "",
-          usuario: "",
-          open: true
-        });
       });
-    Alert.alert("¡Reserva exitosa!");
+    } else {
+      Alert.alert("ERROR");
+    }
   }
 
-  handleClose() {
-    this.setState({ open: false });
-  }
-
-  onBlur() {
-    console.log("#####: onBlur");
+  clearAll() {
+    this.setState({
+      fecha_reserva: "",
+      fecha_pago: "",
+      fecha_prestamo: "",
+      medio_pago: {
+        nombre: "",
+        valor: 0
+      },
+      estacion: "",
+      cicla: "",
+      usuario: "",
+      open: false
+    });
   }
 
   render() {
@@ -152,47 +132,62 @@ export default class App extends React.Component {
     }
     return (
       // view principal
-      <View style={styles.MainContainer}>
+      <View>
         <View style={styles.BarContainer}>
           <Text style={styles.text_Title}>Eco Wheels</Text>
         </View>
-        <View style={styles.container} isPressed={this.handleChange}>
-          <Text style={styles.title}>Reserva</Text>
-          <Text style={styles.labelInput}>Estacion*</Text>
-          <Picker
-            style={styles.input}
-            selectedValue={this.state.estacion}
-            onValueChange={(itemValue, itemIndex) =>
-              this.setState({ estacion: itemValue })
-            }
-          >
-            {this.state.estaciones.map(estacion => (
-              <Picker.Item label={estacion.nombre} value={estacion.nombre} />
-            ))}
-          </Picker>
-          <Text style={styles.labelInput}>Medio de Pago*</Text>
-          <Picker
-            style={styles.input}
-            selectedValue={this.state.medio_pago}
-            onValueChange={(itemValue, itemIndex) =>
-              this.setState({ medio_pago: itemValue })
-            }
-          >
-            {this.state.medios.map(medio => (
-              <Picker.Item label={medio.nombre} value={medio} />
-            ))}
-          </Picker>
-          <Text style={styles.labelInput}>Monto*</Text>
-          <TextInput
-            // editable={false}
-            style={styles.input}
-            keyboardType="numeric"
-            value={this.state.monto}
-            onChange={monto => this.changeMonto(monto)}
-          />
-          <TouchableHighlight style={styles.button} onPress={this.crearReserva}>
-            <Text style={styles.text_Button}>Enviar</Text>
-          </TouchableHighlight>
+        <Dialog.Container visible={this.state.open}>
+          <Dialog.Title>Reserva Exitosa!</Dialog.Title>
+          <Dialog.Description>
+            Tienes 15 min ({this.state.fecha_pago.substring(10, 20)}) para
+            llegar a la estacion {this.state.estacion} y realizar el pago.
+            {this.state.fecha_reserva}
+          </Dialog.Description>
+          <Dialog.Button label="ok" onPress={this.clearAll} />
+        </Dialog.Container>
+        <View style={styles.MainContainer}>
+          <View style={styles.container}>
+            <Text style={styles.title}>Reserva</Text>
+            <Text style={styles.labelInput}>Estacion*</Text>
+            <Picker
+              style={styles.input}
+              selectedValue={this.state.estacion}
+              onValueChange={(itemValue, itemIndex) =>
+                this.setState({ estacion: itemValue })
+              }
+            >
+              {this.state.estaciones.map(estacion => (
+                <Picker.Item label={estacion.nombre} value={estacion.nombre} />
+              ))}
+            </Picker>
+
+            <Text style={styles.labelInput}>Medio de pago*</Text>
+            <Picker
+              style={styles.input}
+              selectedValue={this.state.medio_pago}
+              onValueChange={(itemValue, itemIndex) =>
+                this.setState({ medio_pago: itemValue })
+              }
+            >
+              {this.state.medios.map(medio => (
+                <Picker.Item label={medio.nombre} value={medio} />
+              ))}
+            </Picker>
+
+            <Text style={styles.labelInput}>Monto*</Text>
+            <TextInput
+              editable={false}
+              style={styles.input}
+              value={"   $" + this.state.medio_pago["valor"]}
+            />
+
+            <TouchableHighlight
+              style={styles.button}
+              onPress={this.crearReserva}
+            >
+              <Text style={styles.text_Button}>Reservar</Text>
+            </TouchableHighlight>
+          </View>
         </View>
       </View>
     );
@@ -201,17 +196,16 @@ export default class App extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    marginTop: 30,
+    backgroundColor: "#FFFFFF",
+    marginTop: 20,
     marginBottom: 40,
-    paddingTop: 30,
-    paddingLeft: 40,
-    paddingRight: 40
+    padding: 15,
+    paddingLeft: 38,
+    paddingRight: 35,
+    borderRadius: 5
   },
   MainContainer: {
-    backgroundColor: "#F5F5F5",
-    flex: 1,
+    backgroundColor: "#F2F2F2",
     justifyContent: "center",
     padding: 20,
     paddingLeft: 40,
@@ -219,27 +213,28 @@ const styles = StyleSheet.create({
   },
   BarContainer: {
     backgroundColor: "#3157BB",
-    padding: 20,
-    marginTop: 4
+    padding: 12
   },
   text_Title: {
-    textAlign: "center",
-    fontSize: 30,
+    textAlign: "left",
+    fontSize: 23,
     fontWeight: "bold",
-    color: "#ffffff"
+    color: "#ffffff",
+    marginTop: 20
   },
   title: {
     textAlign: "center",
-    fontSize: 25,
-    marginBottom: 35
+    fontSize: 23,
+    marginBottom: 25
   },
   input: {
-    height: 40,
     borderColor: "#ccc",
     borderWidth: 2,
-    marginBottom: 20
+    marginBottom: 15
   },
   button: {
+    marginTop: 20,
+    marginBottom: 20,
     backgroundColor: "#3157BB",
     padding: 10,
     borderRadius: 7,
@@ -252,17 +247,19 @@ const styles = StyleSheet.create({
     color: "#ffffff"
   },
   labelInput: {
-    fontSize: 15,
-    color: "#DCDCDC"
+    fontSize: 14,
+    color: "#808080"
   },
   formInput: {
     borderBottomWidth: 1.5,
-    marginLeft: 20,
     borderColor: "#333"
   },
   input: {
     borderWidth: 0,
     marginBottom: 10,
     marginLeft: 2
+  },
+  statusBar: {
+    height: 30
   }
 });
