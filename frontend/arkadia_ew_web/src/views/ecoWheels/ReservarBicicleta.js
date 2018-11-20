@@ -115,7 +115,7 @@ class RealizarReserva extends Component {
   }
 
   crearReserva(e) {
-    this.setDate({ open: true });
+    this.setState({ open: true });
     e.preventDefault();
     axios.post(`${API_URL}/reservas`, {
       fecha_reserva: this.state.fecha_reserva,
