@@ -1,30 +1,35 @@
-import React from "react";
-import {StyleSheet} from "react-native";
-import {createStackNavigator,createAppContainer} from "react-navigation"
-import RealizarReserva from "./screens/RealizarReserva";
-import HomeScreen from "./screens/HomeScreen";
-import EstacionesScreen from "./screens/VisualizarEstaciones"
+import React,{Component} from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableHighlight
+} from "react-native";
 
 
-export default class App extends React.Component {
-  constructor(props) {
-    super(props)
-  }
-  render(){    
-    return(
-      <AppContainer/>
-    )
-  }
+class Home extends Component{
+    render() {
+        return(
+            <View style={styles.container}>
+            <Text style={styles.title}>Eco Wheels</Text>
+            <TouchableHighlight
+              style={styles.button}
+              onPress={()=> this.props.navigation.navigate("Reserva")}
+            >
+              <Text style={styles.text_Button}>Reservar</Text>
+            </TouchableHighlight>
+            <TouchableHighlight
+              style={styles.button}
+              onPress={()=> this.props.navigation.navigate("Estaciones")}
+            >
+              <Text style={styles.text_Button}>Estaciones</Text>
+            </TouchableHighlight>
+            </View>
+        );
+    }
 }
 
-const AppNavigator = createStackNavigator({
-  Home : HomeScreen,
-  Reserva: RealizarReserva,
-  Estaciones: EstacionesScreen
-})
-
-const AppContainer = createAppContainer(AppNavigator);
-
+export default Home;
 
 const styles = StyleSheet.create({
   container: {
