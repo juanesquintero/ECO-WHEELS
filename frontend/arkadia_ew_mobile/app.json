@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "arkadia-mobile",
+    "name": "arkadia-ew-mobile",
     "description": "This project is really great.",
     "slug": "arkadia-mobile",
     "privacy": "public",
@@ -19,7 +19,13 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.arkadia.ecowheels"
+    },
+    
+    "android": {      
+      "package": "com.arkadia.ecowheels",
+      "versionCode": 1
     }
   }
 }

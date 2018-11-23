@@ -10,7 +10,7 @@ import {
 import MapView, {Marker} from "react-native-maps"
 import Dialog from "react-native-dialog";
 
-const API_URL = "http://192.168.1.16:3001";
+const API_URL = "http://localhost:3001";
 
 class Estaciones extends Component{
 
