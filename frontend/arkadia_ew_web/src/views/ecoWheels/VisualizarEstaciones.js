@@ -67,7 +67,7 @@ class VisualizarEstaciones extends Component {
   };
 
   render() {
-    const PuntoBicicleta = ({ station }) => (
+    const PuntoEstacion = ({ station }) => (
       <div
         onMouseEnter={() => this.changeStation(station)}
         onClick={this.handleClickOpen}
@@ -129,7 +129,7 @@ class VisualizarEstaciones extends Component {
             defaultZoom={this.props.zoom}
           >
             {this.state.estaciones.map(estacion => (
-              <PuntoBicicleta
+              <PuntoEstacion
                 key={estacion.nombre}
                 lat={estacion.lat}
                 lng={estacion.lng}

@@ -11,6 +11,7 @@ class Home extends Component{
     render() {
         return(
             <View style={styles.container}>
+
             <Text style={styles.title}>Eco Wheels</Text>
             <TouchableHighlight
               style={styles.button}
@@ -18,12 +19,14 @@ class Home extends Component{
             >
               <Text style={styles.text_Button}>Reservar</Text>
             </TouchableHighlight>
+
             <TouchableHighlight
               style={styles.button}
               onPress={()=> this.props.navigation.navigate("Estaciones")}
             >
               <Text style={styles.text_Button}>Estaciones</Text>
             </TouchableHighlight>
+
             </View>
         );
     }

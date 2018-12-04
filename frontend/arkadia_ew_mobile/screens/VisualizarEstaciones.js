@@ -1,16 +1,16 @@
 import React,{Component} from "react";
+import axios from "axios";
 import {
   StyleSheet,
   Text,
   View,
-  Button,
   Alert,
   TouchableHighlight
 } from "react-native";
-import MapView, {Marker} from "react-native-maps"
-import Dialog from "react-native-dialog";
+import MapView from "react-native-maps"
 
-const API_URL = "http://localhost:3001";
+
+const API_URL = "http://192.168.1.13:3001";
 
 class Estaciones extends Component{
 
@@ -20,7 +20,7 @@ class Estaciones extends Component{
             estaciones:[],
         };
         this.getEstaciones = this.getEstaciones.bind(this);
-        this.handleOpen = this.handleOpen.bind(this);
+        this.abrirDialogo = this.abrirDialogo.bind(this);
     }
 
     componentDidMount() {
@@ -28,34 +28,33 @@ class Estaciones extends Component{
     }
     
     getEstaciones = () => {
-    fetch(`${API_URL}/estaciones`)
-        .then(res => res.json())
-        .then(resJson => {
-        this.setState({
-            estaciones: resJson
-        });
-        })
-        .catch(err => {
-            console.error(err);
+        axios.get(`${API_URL}/estaciones`)
+        .then(res => {
+            const { data } = res;
+            this.setState({
+            estaciones: data
+            });
         });
     };
 
-    
-
-    handleOpen = station => {
+    abrirDialogo = station => {  
         Alert.alert(station.nombre,
-            "Ciclas:"+station.ciclas+
-             "   -    Parkings:"+ station.parking+
+            "Ciclas: "+station.ciclas+
+             "    -    Parkings: "+ station.parking+
             "\n"+station.direccion+
-            "\n"+station.descripcion)    
+            "\n"+station.descripcion, 
+            [
+                {text: 'OK',style: 'cancel'},
+                {text: 'Reservar', onPress: () =>  this.props.navigation.navigate("Reserva",{ station: station})},
+            ]
+            )    
     };
     
   
     render() {
         const PuntoEstacion = ({station}) => (
         <Text
-            style={styles.puntoEstacion}
-           
+            style={styles.puntoEstacion}           
         >
         {station.nombre}
         </Text>
@@ -79,7 +78,7 @@ class Estaciones extends Component{
                          latitude: estacion.lat,
                          longitude: estacion.lng,
                      }}
-                     onPress ={()=>this.handleOpen(estacion)}                     
+                     onPress ={()=> this.abrirDialogo(estacion)}                     
                  >
                 <PuntoEstacion station={estacion} key={estacion.id}/>
                  </MapView.Marker>                

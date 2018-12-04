@@ -11,10 +11,10 @@ import {
 } from "react-native";
 import Dialog from "react-native-dialog";
 
-const API_URL = "http://localhost:3001";
+const API_URL = "http://192.168.1.13:3001";
 
 class RealizarReserva extends Component{
-  
+
   constructor(props) {
     super(props);
     this.state = {
@@ -25,57 +25,56 @@ class RealizarReserva extends Component{
       usuario: "",
 
       estaciones: [],
-      estacion: "",
+      estacion: {nombre: "none"},
       medios: [],
-      medio_pago: {
-        nombre: "",
-        valor: 0
-      },
-
-      loading: false,
+      medio_pago: {},
       open: false,
-      abierto: false
+      enabled: false
     };
     this.getEstaciones = this.getEstaciones.bind(this);
     this.getMedios = this.getMedios.bind(this);
+    this.getParams = this.getParams.bind(this);
     this.crearReserva = this.crearReserva.bind(this);
     this.setDate = this.setDate.bind(this);
     this.clearAll = this.clearAll.bind(this);
+   
   }
-
-  
-
+ 
   componentDidMount() {
     this.getEstaciones();
     this.getMedios();
+    this.getParams();
+
+  }
+
+  getParams(){
+    const { navigation } = this.props;
+    const station = navigation.getParam('station',{nombre: "none"});
+    if(station.nombre == "none"){
+      this.setState({enabled: true})
+    }else{
+      this.setState({estacion: station})      
+    }   
   }
 
   getMedios() {
-    this.setState({ loading: true });
-    fetch(`${API_URL}/medios`)
-      .then(res => res.json())
-      .then(resJson => {
+    axios.get(`${API_URL}/medios`)
+      .then(res => {
+        const { data } = res;
         this.setState({
-          medios: resJson
+          medios: data
         });
       })
-      .catch(err => {
-        console.error(err);
-      });
   }
 
   getEstaciones = () => {
-    this.setState({ loading: true });
-    fetch(`${API_URL}/estaciones`)
-      .then(res => res.json())
-      .then(resJson => {
-        this.setState({
-          estaciones: resJson
-        });
-      })
-      .catch(err => {
-        console.error(err);
+    axios.get(`${API_URL}/estaciones`)
+    .then(res => {
+      const { data } = res;
+      this.setState({
+        estaciones: data
       });
+    });
   };
 
   setDate(){
@@ -86,8 +85,7 @@ class RealizarReserva extends Component{
   }
  
   crearReserva(e) {
-
-    if (this.state.estacion && this.state.medio_pago) {
+    if (this.state.estacion.nombre != "none" && this.state.medio_pago.valor != 0) {
       this.setState({ open: true });
       e.preventDefault();
       axios.post(`${API_URL}/reservas`, {
@@ -96,7 +94,7 @@ class RealizarReserva extends Component{
         fecha_prestamo: "",
         medio_pago: this.state.medio_pago["nombre"],
         monto: this.state.medio_pago["valor"],
-        estacion: this.state.estacion,
+        estacion: this.state.estacion.nombre,
         cicla: 1,
         usuario: 2
       });
@@ -110,52 +108,49 @@ class RealizarReserva extends Component{
       fecha_reserva: "",
       fecha_pago: "",
       fecha_prestamo: "",
-      medio_pago: {
-        nombre: "",
-        valor: 0
-      },
-      estacion: "",
+      medio_pago: {},
+      estacion: {nombre: "none"},
       cicla: "",
       usuario: "",
-      open: false
+      open: false,
     });
   }
 
+
   render() {
-    if (this.state.loading) {
-      <View style={styles.container}>
-        <Text>Obteniendo estaciones</Text>
-      </View>;
-    }
+
     return (
       // view principal
       <View>
         <View style={styles.BarContainer}>
           <Text style={styles.text_Title}>Eco Wheels</Text>
         </View>
+
         <Dialog.Container visible={this.state.open}>
           <Dialog.Title>Reserva Exitosa!</Dialog.Title>
           <Dialog.Description>
             Tienes 15 min ({this.state.fecha_pago.substring(10, 20)}) para
-            llegar a la estacion {this.state.estacion} y realizar el pago.
-        
+            llegar a la estacion {this.state.estacion.nombre} y realizar el pago.
           </Dialog.Description>
-          <Dialog.Button label="ok" onPress={this.clearAll} />
+          <Dialog.Button label="OK" onPress={this.clearAll} />
         </Dialog.Container>
 
         <View style={styles.MainContainer}>
           <View style={styles.container}>
             <Text style={styles.title}>Reserva</Text>
+            
             <Text style={styles.labelInput}>Estacion*</Text>
             <Picker
               style={styles.input}
-              selectedValue={this.state.estacion}
+              selectedValue = {this.state.estacion}
+              enabled = {this.state.enabled}
               onValueChange={(itemValue, itemIndex) =>
                 this.setState({ estacion: itemValue })
               }
-            >
-              {this.state.estaciones.map(estacion => (
-                <Picker.Item key={estacion.id} label={estacion.nombre} value={estacion.nombre} />
+            > 
+              <Picker.Item key="0" label={this.state.estacion.nombre} value={this.state.estacion} />
+              {this.state.estaciones.map( estacion => (               
+                <Picker.Item disabled key={estacion.id} label={estacion.nombre} value={estacion} />    
               ))}
             </Picker>
 
@@ -167,8 +162,9 @@ class RealizarReserva extends Component{
                 this.setState({ medio_pago: itemValue })
               }
             >
+              <Picker.Item key="0" label="none" value={{valor: 0 }} />
               {this.state.medios.map(medio => (
-                <Picker.Item key={medio.id} label={medio.nombre} value={medio} on />
+                <Picker.Item key={medio.id} label={medio.nombre} value={medio}/>
               ))}
             </Picker>
 
