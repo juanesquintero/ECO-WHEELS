@@ -14,8 +14,10 @@
     "react": "16.5.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-31.0.0.tar.gz",
     "react-native-dialog": "^5.4.0",
+    "react-native-flash-message": "^0.1.10",
     "react-native-floating-labels": "^1.1.9",
     "react-native-maps": "^0.22.1",
+    "react-native-push-notification": "^3.1.2",
     "react-navigation": "^3.0.0"
   },
   "devDependencies": {

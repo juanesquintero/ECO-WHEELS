@@ -1,4 +1,5 @@
 import React,{Component} from "react";
+import FlashMessage, {showMessage} from "react-native-flash-message";
 import {
   StyleSheet,
   Text,
@@ -13,6 +14,7 @@ class Home extends Component{
             <View style={styles.container}>
 
             <Text style={styles.title}>Eco Wheels</Text>
+            
             <TouchableHighlight
               style={styles.button}
               onPress={()=> this.props.navigation.navigate("Reserva")}
