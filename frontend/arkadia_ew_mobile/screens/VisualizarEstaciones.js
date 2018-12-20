@@ -1,16 +1,19 @@
 import React,{Component} from "react";
 import axios from "axios";
+import MapView, { Overlay } from "react-native-maps"
 import {
   StyleSheet,
   Text,
   View,
   Alert,
+  Dimensions,
   TouchableHighlight
 } from "react-native";
-import MapView from "react-native-maps"
 
 
-const API_URL = "http://192.168.1.13:3001";
+const API_URL = "http://192.168.1.18:3001";
+const {width,height} = Dimensions.get('window')
+
 
 class Estaciones extends Component{
 
@@ -18,12 +21,44 @@ class Estaciones extends Component{
         super(props);
         this.state = {
             estaciones:[],
+            initialPosition: {
+                latitude: 6.215,
+                longitude: -75.588,
+                latitudeDelta: 0.15,
+                longitudeDelta: 0.04,
+            },
+
+            personalPosition:{
+                latitude: 0,
+                longitude: 0,
+            }
         };
         this.getEstaciones = this.getEstaciones.bind(this);
         this.abrirDialogo = this.abrirDialogo.bind(this);
     }
 
-    componentDidMount() {
+    componentWillMount(){
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                this.setState({
+                    initialPosition:{
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                        latitudeDelta: 0.01,
+                        longitudeDelta: 0.01
+                    },
+                    personalPosition: {
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                    }
+                })
+            }, 
+            (error) => console.log(error),
+            {enabledHighAccuracy: true, timeout: 2000, maximumAge:1000 }
+        )
+    }
+
+    componentDidMount() {        
         this.getEstaciones();
     }
     
@@ -53,24 +88,27 @@ class Estaciones extends Component{
   
     render() {
         const PuntoEstacion = ({station}) => (
-        <Text
-            style={styles.puntoEstacion}           
-        >
-        {station.nombre}
-        </Text>
+            <Text style={styles.puntoEstacion}>
+                {station.nombre}
+            </Text>
         )
       
         return (                           
             <View style={styles.containerMap}>
+               
                 <MapView
                 style = {styles.map}
-                initialRegion={{
-                    latitude: 6.2304001,
-                    longitude: -75.59718,
-                    latitudeDelta: 0.14,
-                    longitudeDelta: 0.14
-                }}
+                initialRegion ={this.state.initialPosition}
                 >
+
+                {this.state.personalPosition.latitude != 0 ?  <MapView.Marker
+                coordinate = {this.state.personalPosition}>
+                    <View style = {styles.radius}>
+                        <View style={styles.marker}/>
+                    </View>
+                </MapView.Marker> : null }
+
+
                 {this.state.estaciones.map(estacion => (
                      <MapView.Marker
                      key = {estacion.id}
@@ -79,11 +117,13 @@ class Estaciones extends Component{
                          longitude: estacion.lng,
                      }}
                      onPress ={()=> this.abrirDialogo(estacion)}                     
-                 >
-                <PuntoEstacion station={estacion} key={estacion.id}/>
-                 </MapView.Marker>                
+                    >
+                        <PuntoEstacion station={estacion} key={estacion.id}/>
+                    </MapView.Marker>                
                 ))}
+
                 </MapView>
+
             </View>
                     
         )
@@ -105,13 +145,28 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         color: "#ffffff",      
       },
-   
-    map:{   
-        position : "absolute",
-        top: 0,
-        left:0,
-        right:0,
-        bottom:0,
+    radius:{
+        height: 50,
+        width: 50,
+        borderRadius :50/2,
+        overflow: 'hidden',
+        backgroundColor: 'rgba(0, 122, 255, 0.1)',
+        borderWidth: 1 ,
+        borderColor: 'rgba(0, 122, 255, 0.3)', 
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    marker:{
+        height: 20,
+         width: 20,
+         borderWidth: 3,
+         borderColor: 'white',
+         borderRadius: 20/2,
+         backgroundColor: '#007AFF'
+    },
+    map:{
+        flex: 1,
+        width: width,
     },
     containerMap:{
         position: "absolute",

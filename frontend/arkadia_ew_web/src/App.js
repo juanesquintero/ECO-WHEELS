@@ -34,7 +34,7 @@ class App extends React.Component {
 
     return (
       <BrowserRouter>
-        <Fragment>
+        <Fragment> 
           <CssBaseline />
           <div className={classes.root}>
             <SideBar />

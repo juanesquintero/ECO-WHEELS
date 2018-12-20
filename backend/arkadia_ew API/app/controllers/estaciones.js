@@ -55,13 +55,14 @@ routes.post("/", function(req, res) {
     });
 });
 
-routes.put("/:id", function(req, res) {
+
+routes.put("/:nombre", function(req, res) {
   //Capturar params
-  var id_param = req.params.id;
+  var nombre_param = req.params.nombre;
   //parametro de un query
   var query_param = req.query;
   //filtro
-  var filtro = { _id: id_param };
+  var filtro = { nombre: nombre_param };
   //Capturar datos a guardar
   var body = req.body;
   crud
