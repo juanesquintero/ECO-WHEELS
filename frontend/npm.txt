@@ -1,5 +1,9 @@
+REACT WEB COMMANDS 
+
 npm install
 npm install -g npx
 npx create-react-app
 npm install react scripts
 npm start
+
+
